@@ -20,8 +20,8 @@ const errorLog = winston.createLogger({
   transports: [],
 })
 
-// If not in production, log to files
-if (process.env.NODE_ENV !== 'production') {
+// Store logs in a file in production environments only
+if (process.env.NODE_ENV === 'production') {
   log.add(
     new DailyRotateFile({
       filename: path.join(
@@ -50,10 +50,13 @@ if (process.env.NODE_ENV !== 'production') {
     })
   )
 
-  // Also log to the console in non-production environments
+  // Also log to the console in production environments
   log.add(new winston.transports.Console())
   errorLog.add(new winston.transports.Console({ stderrLevels: ['error'] }))
 }
+// Also log to the console in non-production environments
+log.add(new winston.transports.Console())
+errorLog.add(new winston.transports.Console({ stderrLevels: ['error'] }))
 
 export { errorLog, log }
 
